@@ -146,7 +146,7 @@ def readout():
         R=8*sam.asf*sam.dx*sam.dy*sam.dz/sam.apc*sam.tc**2/sam.tdeb**2/sp.k/sam.muat
     arbsconst=R/sam.tc**2*J/sp.k                                                    #constant for the computation of arbitrary spin dynamics
 
-    pumpfile=open('C:/Users/tgrie/Desktop/3TM_Data/Pump.txt','r')
+    pumpfile=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'3TM_Data/Pump.txt'),'r')
     dpump=np.array([float(i)**2 for i in pumpfile.readlines()])*pump_power
     t=np.arange(len(dpump))*2e-14-2.04e-12+pump_delay
     pump=ipl.interp1d(t,dpump, fill_value=(0,0), bounds_error=False)
