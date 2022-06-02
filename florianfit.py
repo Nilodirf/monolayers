@@ -4,6 +4,8 @@ from scipy.optimize import curve_fit
 import numpy as np
 from scipy import constants as sp
 import math
+import os
+import sys
 
 def interpol(file):
     dat=open('C:/Users/tgrie/Desktop/3TM_Data/Ab-initio-parameters2/' + str(file),'r')

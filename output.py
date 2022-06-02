@@ -2,6 +2,8 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import constants as sp
+import os
+import sys
 from datetime import datetime
 
 #import other files
@@ -16,7 +18,7 @@ date=datetime.now().replace(microsecond=0)
 def output(pl):
 
     #create file and document input data
-    file=open('C:/Users/tgrie/Desktop/3TM_results/'+str(pl['name'])+'/'+str(input())+'.dat','w+')
+    file=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_results/'+str('pl[name]')+'/'+str(input())))
 
     file.write('# time of execution: ' + str(date) + '\n')
     file.write('#model:' + str(pl['model']) + '\n')
