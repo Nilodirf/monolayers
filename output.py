@@ -18,7 +18,7 @@ date=datetime.now().replace(microsecond=0)
 def output(pl):
 
     #create file and document input data
-    file=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_results/'+str('pl[name]')+'/'+str(input())), 'w+')
+    file=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_results/'+str(pl['name'])+'/'+str(input())), 'w+')
 
     file.write('# time of execution: ' + str(date) + '\n')
     file.write('#model:' + str(pl['model']) + '\n')
