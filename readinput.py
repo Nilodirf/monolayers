@@ -125,7 +125,7 @@ def readout():
     initemp=100.                        #initial temperature of electron and phonon bath
 
     #gaussian pulse parameters
-    pump_power=6.2e21                          #power of optical pulse in W/m^3
+    pump_power=2.7e21                        #power of optical pulse in W/m^3
     pump_sigma=0.0495e-12                    #sigma of gaussian pulse in s
     pump_delay=40e-12                        #position of maximum of gaussian laser pulse in s
 
