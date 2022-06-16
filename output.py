@@ -150,24 +150,27 @@ def output(pl):
             #dfs=sd_mag.sd_mag(t, samsize, magz, tempe, mus)
             #fserr=fs+dfs/2
             #dmagz=-np.sum(ms*dfs, axis=-1)/pl['s']
-            #magzerr=magz+dmagz/2
             #fs2=fs+dfs
             #magz2=magz+dmagz
             #dfs2=sd_mag.sd_mag(t, samsize, magz2, tempe, sup, sdn)
             #newfs=fserr+dfs2/2
             #dmagz2=-np.sum(ms*dfs2, axis=-1)/pl['s']
             #newmagz=magzerr+dmagz2/2
-            dmagz=sd_mag.sd_mag(t, samsize, magz, tempe, mus)[0]
-            magzerr=magz+dmagz/2
-            magz2=magz+dmagz
-            dmus=sd_mag.sd_mag(t, samsize, magz, tempe, mus)[1]
+            dfs=sd_mag.locmag(samsize, locmagz, tempe, mus, fs, sup, sdn)
+            fserr=fs+dfs/2
+            dlocmag=-np.sum(ms*dfs, axis=-1)/pl['s']
+            locmagz2=locmag+dlocmag
+            dmus=sd_mag.itmag(samsize, locmagz, tempe, mus)
             muserr=mus+dmus/2
             mus2=mus+dmus
-            dmagz2=sd_mag.sd_mag(t, samsize, magz2, tempe, mus2)[0]
-            magz=magzerr+dmagz2/2
-            dmus2=sd_mag.sd_mag(t, samsize, magz2, tempe, mus2)[1]
-            mus=muserr+dmus2/2
-        
+            dfs2=sd_mag.locmag(samsize, locmagz2, tempe, mus2, fs, sup, sdn)
+            newfs=fserr+dfs2/2
+            dlocmag2=-np.sum(ms*dfs2, axis=-1)/pl['s']
+            newlocmag=locmag+dlocmag/2+dlocmag2/2
+            dmus2=sd_mag.sd_mag(samsize, locmagz2, tempe, mus2)[1]
+            newmus=muserr+dmus2/2
+            fs=newfs
+            mus=newmus
         if pl['qes'] and t>pl['pdel']/pl['dt']-1e4:
             dqes=(dmagz+dmagz2)/2/pl['dt']*pl['J']*magz/pl['dx']/pl['dy']/pl['dz']*pl['apc']
             #x=magz*pl['J']/sp.k/pl['tc']
