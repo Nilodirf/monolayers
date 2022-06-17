@@ -115,7 +115,7 @@ def readout():
     sam=Gadolinium
 
     #simulation time parameters
-    simlen=int(6.4e6)               #length of simulation in units of dt
+    simlen=int(1e6)               #length of simulation in units of dt
     dt=1e-16                        #timestep of simulation
 
     #initial sample conditions
@@ -155,7 +155,7 @@ def readout():
         pump=ipl.interp1d(t,dpump, fill_value=(0,0), bounds_error=False)
 
     #sample constants for s-d-model
-    sdrate=0
+    sdrate=1e10
     rhosd=1e-19
     sdissrate=2e13
 
