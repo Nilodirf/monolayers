@@ -108,7 +108,7 @@ def readout():
     alexpump=False
     fpflo=False
     model='sd'
-    tediff=True
+    tediff=False
     qes=False
 
     #sample
@@ -125,9 +125,9 @@ def readout():
     initemp=100.                        #initial temperature of electron and phonon bath
 
     #gaussian pulse parameters
-    pump_power=1e21                          #power of optical pulse in W/m^3
+    pump_power=1e19                          #power of optical pulse in W/m^3
     pump_sigma=0.0495e-12                    #sigma of gaussian pulse in s
-    pump_delay=40e-12                        #position of maximum of gaussian laser pulse in s
+    pump_delay=10e-12                        #position of maximum of gaussian laser pulse in s
 
     #alternative parameters if no ab initio calculations can be used
     pendep=40e-9                                           #penetration depth of laserpulse
@@ -155,9 +155,9 @@ def readout():
         pump=ipl.interp1d(t,dpump, fill_value=(0,0), bounds_error=False)
 
     #sample constants for s-d-model
-    sdrate=5e12/J*sam.spin
+    sdrate=5e10/J*sam.spin
     rhosd=1e-19
-    sdissrate=1e13
+    sdissrate=2e13
 
     #calculate initial kerr-signal:
     #kerr0=0
