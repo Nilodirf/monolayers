@@ -125,7 +125,7 @@ def readout():
     initemp=100.                        #initial temperature of electron and phonon bath
 
     #gaussian pulse parameters
-    pump_power=1e19                          #power of optical pulse in W/m^3
+    pump_power=5e20                         #power of optical pulse in W/m^3
     pump_sigma=0.0495e-12                    #sigma of gaussian pulse in s
     pump_delay=10e-12                        #position of maximum of gaussian laser pulse in s
 
@@ -155,7 +155,7 @@ def readout():
         pump=ipl.interp1d(t,dpump, fill_value=(0,0), bounds_error=False)
 
     #sample constants for s-d-model
-    sdrate=5e10/J*sam.spin
+    sdrate=0
     rhosd=1e-19
     sdissrate=2e13
 

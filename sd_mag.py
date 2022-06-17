@@ -10,7 +10,7 @@ def itmag(ss, te, dmloc, mus):
     return(dmus)
 
 def locmag(ss, mz, te, mus, fs, sup, sdn):
-    const_ijk=param['sdrate']*(param['J']*mz/param['s']-mus)/np.sinh((param['J']*mz-mus)/2/param['s']/sp.k/te[:ss[2]])
+    const_ijk=param['sdrate']*(mz-mus/(param['J']/param['s']))/np.sinh((param['J']*mz-mus)/2/param['s']/sp.k/te[:ss[2]])
     fsup=sup*fs
     fsdn=sdn*fs
     wupwegprep=const_ijk*np.exp(-(param['J']*mz-mus)/2/param['s']/sp.k/te[:ss[2]])
