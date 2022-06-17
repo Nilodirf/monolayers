@@ -53,8 +53,12 @@ def output(pl):
     file.write('# sigma=' + str(pl['psig']) + '[s]' + '\n')
     file.write('# delay=' + str(pl['pdel']) + '[s]' + '\n')
     file.write('#############################' + '\n')
-    file.write('# time [ps]'+'\t'+'magnetization'+'\t'+'T_e [K]'+'\t'+'T_p [K]'+'\t'+'E_tot [J/m^3]'+'\t'
-               +'E_el [J/m^3]'+'\t'+'E_ph [J/m^3]'+'\t'+'E_spin [J/m^3]'+ '\n')
+    if pl['model']=='sd':
+        file.write('# time [ps]'+'\t'+'magnetization'+'\t'+'T_e [K]'+'\t'+'T_p [K]'+'\t'+'E_tot [J/m^3]'+'\t'
+                   +'E_el [J/m^3]'+'\t'+'E_ph [J/m^3]'+'\t'+'E_spin [J/m^3]'+ '\t' + 'mu_s [J/m^3]' + '\n')
+    else:
+        file.write('# time [ps]'+'\t'+'magnetization'+'\t'+'T_e [K]'+'\t'+'T_p [K]'+'\t'+'E_tot [J/m^3]'+'\t'
+                +'E_el [J/m^3]'+'\t'+'E_ph [J/m^3]'+'\t'+'E_spin [J/m^3]'+ '\n')
 
 
     samsize=[pl['ss'][i] for i in range(3)]
@@ -81,14 +85,13 @@ def output(pl):
         print(sdn)
         magz=-np.sum(ms*fs, axis=-1)/pl['s']
     elif pl['model']=='sd':
-        #fs0=np.zeros(int(2*pl['s'])+1)
-        #fs0[0]=1
-        #fs=np.array([[[fs0 for i in range(samsize[2])] for j in range(samsize[1])] for k in range(samsize[0])])
-        #ms=(np.arange(2*pl['s']+1)+np.array([-pl['s'] for i in range(int(2*pl['s'])+1)]))
-        #sup=-np.power(ms,2)-ms+pl['s']**2+pl['s']
-        #sdn=-np.power(ms,2)+ms+pl['s']**2+pl['s']
-        #magz=-np.sum(ms*fs, axis=-1)/pl['s']
-        magz=np.array([pl['inimag'][2] for i in range(samsize[2])])
+        fs0=np.zeros(int(2*pl['s'])+1)
+        fs0[0]=1
+        fs=np.array([[[fs0 for i in range(samsize[2])] for j in range(samsize[1])] for k in range(samsize[0])])
+        ms=(np.arange(2*pl['s']+1)+np.array([-pl['s'] for i in range(int(2*pl['s'])+1)]))
+        sup=-np.power(ms,2)-ms+pl['s']**2+pl['s']
+        sdn=-np.power(ms,2)+ms+pl['s']**2+pl['s']
+        magz=-np.sum(ms*fs, axis=-1)/pl['s']
         mus=np.array([0 for i in range(samsize[2])])
     dqes=np.array([0.])
     kerr0=np.sum(magz*exp0)
@@ -111,8 +114,14 @@ def output(pl):
         kerr=np.sum(magz*exp0)/kerr0
 
         if t==0 or t%100==0:
-            file.write(str(t*pl['dt']*1e12) + '\t' + str(kerr) + '\t' + str(tempe[0]) + '\t' + str(tempp[0]) + '\t' 
+            if pl['model']=='sd':
+                file.write(str(t*pl['dt']*1e12) + '\t' + str(kerr) + '\t' + str(tempe[0]) + '\t' + str(tempp[0]) + '\t' 
+                     + str(etot) + '\t' + str(eel) + '\t' + str(eph) + '\t' + str(espin) + '\t' + str(mus) + '\n')
+            else:
+                file.write(str(t*pl['dt']*1e12) + '\t' + str(kerr) + '\t' + str(tempe[0]) + '\t' + str(tempp[0]) + '\t' 
                      + str(etot) + '\t' + str(eel) + '\t' + str(eph) + '\t' + str(espin) + '\n')
+
+
 
         #if t==0 or t%100==0:
         #    file.write(str(t*pl['dt']*1e12) + '\t' + str(magz[0,0,0]/pl['inimag'][2]) + '\t' + str(tempe[0]) + '\t' + str(tempp[0]) + '\n')
@@ -156,19 +165,20 @@ def output(pl):
             #newfs=fserr+dfs2/2
             #dmagz2=-np.sum(ms*dfs2, axis=-1)/pl['s']
             #newmagz=magzerr+dmagz2/2
-            dfs=sd_mag.locmag(samsize, locmagz, tempe, mus, fs, sup, sdn)
+            dfs=sd_mag.locmag(samsize, magz, tempe, mus, fs, sup, sdn)
             fserr=fs+dfs/2
             dlocmag=-np.sum(ms*dfs, axis=-1)/pl['s']
-            locmagz2=locmag+dlocmag
-            dmus=sd_mag.itmag(samsize, locmagz, tempe, mus)
+            locmagz2=magz+dlocmag
+            dmus=sd_mag.itmag(samsize, tempe, dlocmag, mus)
             muserr=mus+dmus/2
             mus2=mus+dmus
             dfs2=sd_mag.locmag(samsize, locmagz2, tempe, mus2, fs, sup, sdn)
             newfs=fserr+dfs2/2
             dlocmag2=-np.sum(ms*dfs2, axis=-1)/pl['s']
-            newlocmag=locmag+dlocmag/2+dlocmag2/2
-            dmus2=sd_mag.sd_mag(samsize, locmagz2, tempe, mus2)[1]
+            newmagz=magz+dlocmag/2+dlocmag2/2
+            dmus2=sd_mag.itmag(samsize, tempe, dlocmag2, mus2)
             newmus=muserr+dmus2/2
+            magz=newmagz
             fs=newfs
             mus=newmus
         if pl['qes'] and t>pl['pdel']/pl['dt']-1e4:

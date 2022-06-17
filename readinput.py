@@ -107,9 +107,9 @@ def readout():
     #define different approaches of simulation:
     alexpump=False
     fpflo=False
-    model='m3tm'
+    model='sd'
     tediff=True
-    qes=True
+    qes=False
 
     #sample
     sam=Gadolinium
@@ -146,10 +146,18 @@ def readout():
         R=8*sam.asf*sam.dx*sam.dy*sam.dz/sam.apc*sam.tc**2/sam.tdeb**2/sp.k/sam.muat
     arbsconst=R/sam.tc**2*J/sp.k                                                    #constant for the computation of arbitrary spin dynamics
 
-    pumpfile=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'3TM_Data/Pump.txt'),'r')
-    dpump=np.array([float(i)**2 for i in pumpfile.readlines()])*pump_power
-    t=np.arange(len(dpump))*2e-14-2.04e-12+pump_delay
-    pump=ipl.interp1d(t,dpump, fill_value=(0,0), bounds_error=False)
+
+    pump=None
+    if alexpump:
+        pumpfile=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'3TM_Data/Pump.txt'),'r')
+        dpump=np.array([float(i)**2 for i in pumpfile.readlines()])*pump_power
+        t=np.arange(len(dpump))*2e-14-2.04e-12+pump_delay
+        pump=ipl.interp1d(t,dpump, fill_value=(0,0), bounds_error=False)
+
+    #sample constants for s-d-model
+    sdrate=0.5e13
+    rhosd=1e-19
+    sdissrate=1e13
 
     #calculate initial kerr-signal:
     #kerr0=0
@@ -162,7 +170,7 @@ def readout():
            'dx':sam.dx, 'dy':sam.dy, 'dz':sam.dz, 'simlen':simlen, 'J':J, 'cvec':cve_const, 'cvpc': cvp_const,
            'gep':gep, 'fpflo':fpflo, 'psig':pump_sigma, 'tdeb':sam.tdeb, 'pp':pump_power, 'asc':arbsconst, 'pdel':pump_delay, 
            'asf':sam.asf, 'mod':model, 'apc':sam.apc, 'name':sam.name, 'model':model, 'pump':pump, 'ap':alexpump, 'kappa':sam.kappa, 'tediff':tediff, 'ges':ges, 'qes':qes,
-           'lambda':lamda}
+           'lambda':lamda, 'sdrate':sdrate, 'rhosd':rhosd, 'sdissrate':sdissrate}
 
     if nj<samplesize[2]:
         print('The magnetic sampledepth (nz) must not be larger then the total (thermally excited) sampledepth (nj)')
