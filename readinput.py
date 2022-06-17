@@ -155,7 +155,7 @@ def readout():
         pump=ipl.interp1d(t,dpump, fill_value=(0,0), bounds_error=False)
 
     #sample constants for s-d-model
-    sdrate=0.5e13
+    sdrate=5e12/J*sam.spin
     rhosd=1e-19
     sdissrate=1e13
 

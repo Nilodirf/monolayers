@@ -87,7 +87,7 @@ def output(pl):
     elif pl['model']=='sd':
         fs0=np.zeros(int(2*pl['s'])+1)
         fs0[0]=1
-        fs=np.array([[[fs0 for i in range(samsize[2])] for j in range(samsize[1])] for k in range(samsize[0])])
+        fs=np.array([fs0 for i in range(samsize[2])])
         ms=(np.arange(2*pl['s']+1)+np.array([-pl['s'] for i in range(int(2*pl['s'])+1)]))
         sup=-np.power(ms,2)-ms+pl['s']**2+pl['s']
         sdn=-np.power(ms,2)+ms+pl['s']**2+pl['s']
@@ -143,8 +143,7 @@ def output(pl):
             dmagz=-np.sum(ms*dfs, axis=-1)/pl['s']
             fs2=fs+dfs
             magz2=magz+dmagz
-            dfs2=magdyn_s.magdyn_s(t, samsize, magz2, fs2, sup, sdn, tempe, tempp)
-            
+            dfs2=magdyn_s.magdyn_s(t, samsize, magz2, fs2, sup, sdn, tempe, tempp) 
             dmagz2=-np.sum(ms*dfs2, axis=-1)/pl['s']
             df=(dfs+dfs2)/2
             dm=(dmagz+dmagz2)/2
@@ -156,28 +155,17 @@ def output(pl):
             fs=newfs
             magz=newmagz
         elif pl['model']=='sd':
-            #dfs=sd_mag.sd_mag(t, samsize, magz, tempe, mus)
-            #fserr=fs+dfs/2
-            #dmagz=-np.sum(ms*dfs, axis=-1)/pl['s']
-            #fs2=fs+dfs
-            #magz2=magz+dmagz
-            #dfs2=sd_mag.sd_mag(t, samsize, magz2, tempe, sup, sdn)
-            #newfs=fserr+dfs2/2
-            #dmagz2=-np.sum(ms*dfs2, axis=-1)/pl['s']
-            #newmagz=magzerr+dmagz2/2
             dfs=sd_mag.locmag(samsize, magz, tempe, mus, fs, sup, sdn)
-            fserr=fs+dfs/2
             dlocmag=-np.sum(ms*dfs, axis=-1)/pl['s']
             locmagz2=magz+dlocmag
             dmus=sd_mag.itmag(samsize, tempe, dlocmag, mus)
-            muserr=mus+dmus/2
             mus2=mus+dmus
             dfs2=sd_mag.locmag(samsize, locmagz2, tempe, mus2, fs, sup, sdn)
-            newfs=fserr+dfs2/2
+            newfs=fs+(dfs+dfs2)/2
             dlocmag2=-np.sum(ms*dfs2, axis=-1)/pl['s']
-            newmagz=magz+dlocmag/2+dlocmag2/2
+            newmagz=magz+(dlocmag+dlocmag2)/2
             dmus2=sd_mag.itmag(samsize, tempe, dlocmag2, mus2)
-            newmus=muserr+dmus2/2
+            newmus=mus+(dmus+dmus2)/2
             magz=newmagz
             fs=newfs
             mus=newmus
