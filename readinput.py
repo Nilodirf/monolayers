@@ -32,9 +32,9 @@ def readout():
             self.kappa=kappa
 
     Nickel=sample('Nickel',
-                  florianfit.interpol('Ab-initio-Ni/NI_G_ep.txt'),
-                  florianfit.interpol('Ab-initio-Ni/NI_c_e.txt'),
-                  florianfit.interpol('Ab-initio-Ni/NI_c_p.txt'),
+                  florianfit.interpol('Ab-initio-Ni/Ni_G_ep.txt'),
+                  florianfit.interpol('Ab-initio-Ni/Ni_c_e.txt'),
+                  florianfit.interpol('Ab-initio-Ni/Ni_c_p.txt'),
                   0.5, #spin
                   633, #tc
                   360, #tdeb
@@ -77,10 +77,10 @@ def readout():
                       None,
                       None,
                       None,
-                      3,
+                      3.5,
                       293,
                       160,
-                      7,
+                      7.5,
                       3.6e-10,
                       3.6e-10,
                       5.8e-10,
@@ -107,9 +107,9 @@ def readout():
     #define different approaches of simulation:
     alexpump=False
     fpflo=False
-    model='sd'
+    model='arbspin'
     tediff=False
-    qes=False
+    qes=True
 
     #sample
     sam=Gadolinium
@@ -125,7 +125,7 @@ def readout():
     initemp=[i*10 for i in range(1,29)]                        #initial temperature of electron and phonon bath [K]
 
     #gaussian pulse parameters
-    pump_power=5e20                         #power of optical pulse in W/m^3
+    pump_power=0e20                         #power of optical pulse in W/m^3
     pump_sigma=0.0495e-12                    #sigma of gaussian pulse in s
     pump_delay=10e-12                        #position of maximum of gaussian laser pulse in s
 
