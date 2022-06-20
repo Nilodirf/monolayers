@@ -122,7 +122,7 @@ def readout():
     samplesize=[1,1,1]                  #samplesize
     nj=1                                #film thickness
     h_ext=0                             #external magnetic field
-    initemp=100.                        #initial temperature of electron and phonon bath
+    initemp=[i*10 for i in range(1,29)]                        #initial temperature of electron and phonon bath [K]
 
     #gaussian pulse parameters
     pump_power=5e20                         #power of optical pulse in W/m^3

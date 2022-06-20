@@ -15,10 +15,10 @@ date=datetime.now().replace(microsecond=0)
 
 #this file defines the initial parameters in a usable form and calls the function(s) to compute the dynamics
 
-def output(pl):
+def output(pl, tem0):
 
     #create file and document input data
-    file=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_results/'+str(pl['name'])+'/'+str(input()) + '.dat'), 'w+')
+    file=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_results/'+str(pl['name'])+'/initempS72/'+str(tem0*10) + '.dat'), 'w+')
 
     file.write('# time of execution: ' + str(date) + '\n')
     file.write('#model:' + str(pl['model']) + '\n')
@@ -105,8 +105,8 @@ def output(pl):
 
 
     ####temperature initialisation:#####
-    tempe=np.array([pl['initemp'] for i in range(pl['nj'])])
-    tempp=np.array([pl['initemp'] for i in range(pl['nj'])])
+    tempe=np.array([pl['initemp'][tem0] for i in range(pl['nj'])])
+    tempp=np.array([pl['initemp'][tem0] for i in range(pl['nj'])])
 
     
     for t in range(pl['simlen']):
