@@ -15,10 +15,10 @@ date=datetime.now().replace(microsecond=0)
 
 #this file defines the initial parameters in a usable form and calls the function(s) to compute the dynamics
 
-def output(pl, tem0):
+def output(pl, i, j):
 
     #create file and document input data
-    file=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_results/'+str(pl['name'])+'/initempS72/'+str(tem0*10) + '.dat'), 'w+')
+    file=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_results/'+str(pl['name'])+'/sd/ts'+ str(i) + 'sp' + str(j) + '.dat'), 'w+')
 
     file.write('# time of execution: ' + str(date) + '\n')
     file.write('#model:' + str(pl['model']) + '\n')
@@ -105,8 +105,8 @@ def output(pl, tem0):
 
 
     ####temperature initialisation:#####
-    tempe=np.array([pl['initemp'][tem0] for i in range(pl['nj'])])
-    tempp=np.array([pl['initemp'][tem0] for i in range(pl['nj'])])
+    tempe=np.array([pl['initemp'] for i in range(pl['nj'])])
+    tempp=np.array([pl['initemp'] for i in range(pl['nj'])])
 
     
     for t in range(pl['simlen']):
@@ -155,16 +155,16 @@ def output(pl, tem0):
             fs=newfs
             magz=newmagz
         elif pl['model']=='sd':
-            dfs=sd_mag.locmag(samsize, magz, tempe, mus, fs, sup, sdn)
+            dfs=sd_mag.locmag(samsize, magz, tempe, mus, fs, sup, sdn, i, j)
             dlocmag=-np.sum(ms*dfs, axis=-1)/pl['s']
             locmagz2=magz+dlocmag
-            dmus=sd_mag.itmag(samsize, tempe, dlocmag, mus)
+            dmus=sd_mag.itmag(samsize, tempe, dlocmag, mus, i, j)
             mus2=mus+dmus
-            dfs2=sd_mag.locmag(samsize, locmagz2, tempe, mus2, fs, sup, sdn)
+            dfs2=sd_mag.locmag(samsize, locmagz2, tempe, mus2, fs, sup, sdn, i, j)
             newfs=fs+(dfs+dfs2)/2
             dlocmag2=-np.sum(ms*dfs2, axis=-1)/pl['s']
             newmagz=magz+(dlocmag+dlocmag2)/2
-            dmus2=sd_mag.itmag(samsize, tempe, dlocmag2, mus2)
+            dmus2=sd_mag.itmag(samsize, tempe, dlocmag2, mus2, i, j)
             newmus=mus+(dmus+dmus2)/2
             magz=newmagz
             fs=newfs

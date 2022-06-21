@@ -5,12 +5,12 @@ from scipy import constants as sp
 
 from readinput import param
 
-def itmag(ss, te, dmloc, mus):
-    dmus=(param['rhosd']*dmloc-mus/param['sdissrate'])*param['dt']
+def itmag(ss, te, dmloc, mus, i, j):
+    dmus=(param['rhosd']*dmloc-mus/j)*param['dt']
     return(dmus)
 
-def locmag(ss, mz, te, mus, fs, sup, sdn):
-    const_ijk=param['sdrate']*(mz-mus/(param['J']/param['s']))/np.sinh((param['J']*mz-mus)/2/param['s']/sp.k/te[:ss[2]])
+def locmag(ss, mz, te, mus, fs, sup, sdn, i, j):
+    const_ijk=i*(mz-mus/(param['J']/param['s']))/np.sinh((param['J']*mz-mus)/2/param['s']/sp.k/te[:ss[2]])
     fsup=sup*fs
     fsdn=sdn*fs
     wupwegprep=const_ijk*np.exp(-(param['J']*mz-mus)/2/param['s']/sp.k/te[:ss[2]])

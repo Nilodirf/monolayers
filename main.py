@@ -12,7 +12,8 @@ import output
 
 #read out inputfile
 par=readinput.readout()
-for i in range(len(par['initemp'])):
-    output.output(par,i)
+for i in par['sdrate']:
+    for j in par['sdissrate']:
+        output.output(par,i, j)
 
 

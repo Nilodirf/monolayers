@@ -107,7 +107,7 @@ def readout():
     #define different approaches of simulation:
     alexpump=False
     fpflo=False
-    model='arbspin'
+    model='sd'
     tediff=False
     qes=True
 
@@ -122,10 +122,10 @@ def readout():
     samplesize=[1,1,1]                  #samplesize
     nj=1                                #film thickness
     h_ext=0                             #external magnetic field
-    initemp=[i*10 for i in range(1,29)]                        #initial temperature of electron and phonon bath [K]
+    initemp=100                        #initial temperature of electron and phonon bath [K]
 
     #gaussian pulse parameters
-    pump_power=0e20                         #power of optical pulse in W/m^3
+    pump_power=8e20                         #power of optical pulse in W/m^3
     pump_sigma=0.0495e-12                    #sigma of gaussian pulse in s
     pump_delay=10e-12                        #position of maximum of gaussian laser pulse in s
 
@@ -155,9 +155,9 @@ def readout():
         pump=ipl.interp1d(t,dpump, fill_value=(0,0), bounds_error=False)
 
     #sample constants for s-d-model
-    sdrate=1e10
+    sdrate=[1e10, 5e10, 1e11, 5e11, 1e12, 5e12, 1e13, 5e13]
     rhosd=1e-19
-    sdissrate=2e13
+    sdissrate=[1e10, 5e10, 1e11, 5e11, 1e12, 5e12, 1e13, 5e13]
 
     #calculate initial kerr-signal:
     #kerr0=0
