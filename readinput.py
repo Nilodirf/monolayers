@@ -109,7 +109,7 @@ def readout():
     fpflo=False
     model='sd'
     tediff=False
-    qes=True
+    qes=False
 
     #sample
     sam=Gadolinium
@@ -122,7 +122,7 @@ def readout():
     samplesize=[1,1,1]                  #samplesize
     nj=1                                #film thickness
     h_ext=0                             #external magnetic field
-    initemp=100                        #initial temperature of electron and phonon bath [K]
+    initemp=100.                        #initial temperature of electron and phonon bath [K]
 
     #gaussian pulse parameters
     pump_power=8e20                         #power of optical pulse in W/m^3
@@ -155,9 +155,9 @@ def readout():
         pump=ipl.interp1d(t,dpump, fill_value=(0,0), bounds_error=False)
 
     #sample constants for s-d-model
-    sdrate=[1e10, 5e10, 1e11, 5e11, 1e12, 5e12, 1e13, 5e13]
+    sdrate=np.array([0.1, 0.5, 1, 5, 10, 50, 100])*1e-12
     rhosd=1e-19
-    sdissrate=[1e10, 5e10, 1e11, 5e11, 1e12, 5e12, 1e13, 5e13]
+    sdissrate=np.array([0.1, 0.5, 1, 5, 10, 50, 100])*1e-12
 
     #calculate initial kerr-signal:
     #kerr0=0
