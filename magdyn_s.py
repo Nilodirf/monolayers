@@ -4,10 +4,8 @@ from scipy import constants as sp
 from readinput import param
 
 def magdyn_s(ts, ss, mz, fs, sup, sdn, te, tp):
-    if param['fpflo']:
-        const_ijk=param['asc']*tp[:ss[2]]*mz/4/param['s']/np.sinh(param['J']*mz/2/param['s']/sp.k/te[:ss[2]])*param['gepf'](te[:ss[2]])
-    else:
-        const_ijk=param['asc']*tp[:ss[2]]*mz/4/param['s']/np.sinh(param['J']*mz/2/param['s']/sp.k/te[:ss[2]])*param['gep']
+    
+    const_ijk=param['asc']*tp[:ss[2]]*mz/4/param['s']/np.sinh(param['J']*mz/2/param['s']/sp.k/te[:ss[2]])*param['gepf'](te[:ss[2]])
     fsup=sup*fs
     fsdn=sdn*fs
     wupwegprep=const_ijk*np.exp(-param['J']*mz/2/param['s']/sp.k/te[:ss[2]])

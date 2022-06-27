@@ -7,16 +7,31 @@ import math
 import os
 import sys
 
-def interpol(file):
-    dat=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_Data/Ab-initio-parameters2/' + str(file)),'r')
-    lines=dat.readlines()[2:]
-    #vals=[line for line in lines if not line.startswith('M') or line.startswith('T')]
-    t=np.array([float(i.split()[0]) for i in lines])
-    y=np.array([float(line.split()[1]) for line in lines])
-    if np.amin(t)>290:
-        t[0]=290.
-    fit=ipl.interp1d(t,y)
-    return(fit)
+def interpol(file, func, tein):
+    if type(file)== str :
+        dat=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_Data/Ab-initio-parameters2/' + str(file)),'r')
+        lines=dat.readlines()[2:]
+        #vals=[line for line in lines if not line.startswith('M') or line.startswith('T')]
+        t=np.array([float(i.split()[0]) for i in lines])
+        y=np.array([float(line.split()[1]) for line in lines])
+        if np.amin(t)>290:
+            t[0]=290.
+        fit=ipl.interp1d(t,y)
+        return(fit)
+    elif isinstance(file, float):
+        if func=='const':
+            t=np.arange(0,2500, 250)
+            y=np.array([file for i in t])
+            fit = ipl.interp1d(t, y)
+        elif func=='lin':
+            t=np.arange(30,2500,10)
+            y=np.array([file*float(i) for i in t])
+            fit= ipl.interp1d(t,y)
+        elif func=='einstein':
+            t=np.arange(0,2500, 0.001)
+            y=file*(tein/t)**2*np.exp(tein/t)/(np.exp(tein/t)-1)**2
+            fit=ipl.interp1d(t,y)
+        return(fit)
 
 
 def fitcp(T, Tein):

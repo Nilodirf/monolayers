@@ -8,15 +8,11 @@ from readinput import param
 
 def tempdyn(ts, te, tp, dqes):
 
-    if param['fpflo']:
-        cv_el=param['celf'](te)
-        cv_ph=param['cphf'](tp)
-    else:
+
+    cv_el=param['celf'](te)
+    cv_ph=param['cphf'](tp)
+
         #compute electronic specific heat:#
-        cv_el=te*param['cvec']
-        cv_ph=param['cvpc']
-        if param['name']=='Gadolinium':
-            cv_ph=(1.51e6*(120/tp)**2)*np.exp(120/tp)/((np.exp(120/tp)-1)**2) 
         #compute phononic specific heat depending on temperature#
         #cv_ph=np.zeros(param['nj'])
         #tred=np.true_divide(param['tdeb'],tp)
@@ -47,10 +43,8 @@ def tempdyn(ts, te, tp, dqes):
     #cv_ph+=cv_mag
 
     ###########compute pump temperature for each timestep and depth:##########
-    if param['ap']:
-        dpump=param['pump'](ts*param['dt'])
-    else:
-        dpump=param['pp']*np.exp(-np.arange(param['nj'])*param['dz']/param['pendep'])*np.exp(-((ts*param['dt']-param['pdel'])**2)/2/param['psig']**2)
+
+    dpump=param['pp']*np.exp(-np.arange(param['nj'])*param['dz']/param['pendep'])*np.exp(-((ts*param['dt']-param['pdel'])**2)/2/param['psig']**2)
 
     ######compute heat diffusion#####
         #if ts>9e4 and ts%1000==0:
@@ -58,10 +52,8 @@ def tempdyn(ts, te, tp, dqes):
 
     ############calculate temperature derivatives##########
 
-    if param['fpflo']:
-        teq=param['gepf'](te)*(te-tp)
-    else:
-        teq=param['gep']*(te-tp)
+
+    teq=param['gepf'](te)*(te-tp)
 
     dtel=dpump-teq
     dtph=teq

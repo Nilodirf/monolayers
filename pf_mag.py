@@ -6,7 +6,7 @@ from scipy import constants as sp
 from readinput import param
 
 def itmag(ss, te, dmloc, mus, pf, pl):
-    dmus=param['rhosd']*dmloc-(mus/pl)*param['dt']
+    dmus=(param['rhosd']*dmloc-mus/pl)*param['dt']
     return(dmus)
 
 def locmag(ss, mz, te, mus, fs, sup, sdn, pf, pl):

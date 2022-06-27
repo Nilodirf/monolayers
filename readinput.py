@@ -8,13 +8,11 @@ import sys
 
 import florianfit
 
-#this file reads out input parameters from a file and defines additional parameters
-
 
 def readout():
 
     class sample:
-        def __init__(self, name, gepfit, celfit, cphfit, spin, tc, tdeb, muat, dx, dy, dz, apc, asf, inimag, kappa):
+        def __init__(self, name, gepfit, celfit, cphfit, spin, tc, tdeb, muat, dx, dy, dz, apc, asf, inimag, kappa, locmom, locspin):
             self.name=name
             self.gepfit=gepfit
             self.celfit=celfit
@@ -30,11 +28,13 @@ def readout():
             self.asf=asf
             self.inimag=inimag
             self.kappa=kappa
+            self.locmom=locmom
+            self.locspin=locspin
 
     Nickel=sample('Nickel',
-                  florianfit.interpol('Ab-initio-Ni/Ni_G_ep.txt'),
-                  florianfit.interpol('Ab-initio-Ni/Ni_c_e.txt'),
-                  florianfit.interpol('Ab-initio-Ni/Ni_c_p.txt'),
+                  florianfit.interpol('Ab-initio-Ni/Ni_G_ep.txt', None, None),
+                  florianfit.interpol('Ab-initio-Ni/Ni_c_e.txt', None, None),
+                  florianfit.interpol('Ab-initio-Ni/Ni_c_p.txt', None, None),
                   0.5, #spin
                   633, #tc
                   360, #tdeb
@@ -43,12 +43,14 @@ def readout():
                   4, #apc
                   0.063,  #asf
                   [0.,0.,0.96925], #inimag at 295K
-                  90.7) #kappa
+                  90.7, #kappa
+                  0.,
+                  0.)
    
     Cobalt=sample('Cobalt',
-                  florianfit.interpol('Ab-initio-Co/Co_G_ep.txt'),
-                  florianfit.interpol('Ab-initio-Co/Co_c_e.txt'),
-                  florianfit.interpol('Ab-initio-Co/Co_c_p.txt'),
+                  florianfit.interpol('Ab-initio-Co/Co_G_ep.txt', None, None),
+                  florianfit.interpol('Ab-initio-Co/Co_c_e.txt', None, None),
+                  florianfit.interpol('Ab-initio-Co/Co_c_p.txt', None, None),
                   1.5, #spin
                   1423, #tc
                   342.5, #tdeb
@@ -57,12 +59,14 @@ def readout():
                   4, #apc
                   0.045,  #asf
                   [0.,0.,0.99793], #inimag at 295K
-                  90.7)  #kappa
+                  90.7, #kappa
+                  0.,
+                  0.)
 
     Iron=sample('Iron',
-                florianfit.interpol('Ab-initio-Fe/Fe_G_ep.txt'),
-                florianfit.interpol('Ab-initio-Fe/Fe_c_e.txt'),
-                florianfit.interpol('Ab-initio-Fe/Fe_c_p.txt'),
+                florianfit.interpol('Ab-initio-Fe/Fe_G_ep.txt', None, None),
+                florianfit.interpol('Ab-initio-Fe/Fe_c_e.txt', None, None),
+                florianfit.interpol('Ab-initio-Fe/Fe_c_p.txt', None, None),
                 2, #spin
                 1041, #tc
                 396, #tdeb
@@ -71,12 +75,14 @@ def readout():
                 2, #apc
                 0.035, #asf
                 [0.,0.,0.9863], #inimag at 295K
-                0) #kappa
+                0, #kappa
+                0.,
+                0.)
 
     Gadolinium=sample('Gadolinium',
-                      None,
-                      None,
-                      None,
+                      florianfit.interpol(2.5e17, 'const', None),
+                      florianfit.interpol(225., 'lin', None),
+                      florianfit.interpol(1.51e6, 'einstein', 120),
                       3.5,
                       293,
                       160,
@@ -84,24 +90,12 @@ def readout():
                       3.6e-10,
                       3.6e-10,
                       5.8e-10,
-                      6,
+                      7.5,
                       0.12,
                       [0.,0.,1.],
-                      0)
-
-    Dummysd=sample('Dummysd',
-                   None,
-                   None,
-                   None,
-                   0.5,
-                   700,
-                   450,
-                   0.7,
-                   2.5e-10, 2.5e-10, 2.5e-10,
-                   2,
-                   None,
-                   [0,0,1.],
-                   0)
+                      0,
+                      7.,
+                      3.)
     
 
     #define different approaches of simulation:
@@ -141,9 +135,9 @@ def readout():
     #sample constants deducted from class input
     J=float(3*sp.k*sam.tc*(sam.spin**2)/(sam.spin*(sam.spin+1)))                        #exchange splitting constant
     if fpflo:
-        R=8*sam.asf*sam.dx*sam.dy*sam.dz/sam.apc*sam.tc**2/sam.tdeb**2/sp.k/sam.muat    #parameter for magnetization dynamics /gep
+        R=8*sam.asf*sam.dx*sam.dy*sam.dz/sam.apc*sam.tc**2/sam.tdeb**2/sp.k/(sam.muat-sam.locmom)    #parameter for magnetization dynamics /gep
     else:
-        R=8*sam.asf*sam.dx*sam.dy*sam.dz/sam.apc*sam.tc**2/sam.tdeb**2/sp.k/sam.muat
+        R=8*sam.asf*sam.dx*sam.dy*sam.dz/sam.apc*sam.tc**2/sam.tdeb**2/sp.k/(sam.muat-sam.locmom)
     arbsconst=R/sam.tc**2*J/sp.k                                                    #constant for the computation of arbitrary spin dynamics
 
 
@@ -155,9 +149,9 @@ def readout():
         pump=ipl.interp1d(t,dpump, fill_value=(0,0), bounds_error=False)
 
     #sample constants for s-d-model
-    sdrate=np.array([0.1, 1, 10, 100])*1e-12
-    rhosd=4/3*1e19
-    sdissrate=np.array([0.1, 1, 10, 100])*1e-12
+    sdrate=np.array([0.1])*1e-12
+    rhosd=1e-19
+    sdissrate=np.array([0.1])*1e-12
 
     #calculate initial kerr-signal:
     #kerr0=0
@@ -167,10 +161,10 @@ def readout():
 
     param={'gepf': sam.gepfit, 'celf': sam.celfit, 'cphf': sam.cphfit, 'ss': samplesize, 's':sam.spin, 'tc':sam.tc,
            'muat':sam.muat, 'hex':h_ext, 'dt':dt, 'nj':nj, 'R':R, 'inimag':sam.inimag, 'pendep':pendep, 'initemp':initemp, 'me0':me0,
-           'dx':sam.dx, 'dy':sam.dy, 'dz':sam.dz, 'simlen':simlen, 'J':J, 'cvec':cve_const, 'cvpc': cvp_const,
-           'gep':gep, 'fpflo':fpflo, 'psig':pump_sigma, 'tdeb':sam.tdeb, 'pp':pump_power, 'asc':arbsconst, 'pdel':pump_delay, 
-           'asf':sam.asf, 'mod':model, 'apc':sam.apc, 'name':sam.name, 'model':model, 'pump':pump, 'ap':alexpump, 'kappa':sam.kappa, 'tediff':tediff, 'ges':ges, 'qes':qes,
-           'lambda':lamda, 'sdrate':sdrate, 'rhosd':rhosd, 'sdissrate':sdissrate}
+           'dx':sam.dx, 'dy':sam.dy, 'dz':sam.dz, 'simlen':simlen, 'J':J,'fpflo':fpflo, 'psig':pump_sigma, 'tdeb':sam.tdeb, 'pp':pump_power, 
+           'asc':arbsconst, 'pdel':pump_delay, 
+           'asf':sam.asf, 'apc':sam.apc, 'name':sam.name, 'model':model, 'pump':pump, 'ap':alexpump, 'kappa':sam.kappa, 'tediff':tediff, 'ges':ges, 'qes':qes,
+           'lambda':lamda, 'sdrate':sdrate, 'rhosd':rhosd, 'sdissrate':sdissrate, 'locspin':sam.locspin, 'locmom':sam.locmom}
 
     if nj<samplesize[2]:
         print('The magnetic sampledepth (nz) must not be larger then the total (thermally excited) sampledepth (nj)')

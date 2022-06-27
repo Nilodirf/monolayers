@@ -14,12 +14,8 @@ def magdyn(ts, ss, mz, te, tp):
         eta=hmfaz/sp.k/te[:ss[2]]
         mmag=brillouin(eta,param['s'])
         #mmag=np.tanh(param['tc']/te[:ss[2]]*mz)
-        if param['fpflo']:
-            qs=3*param['tc']*mmag/2/(param['s']+1)/te[:ss[2]]
-            gamma=tp[:ss[2]]/param['tc']*param['R']*param['gepf'](te[:ss[2]])#*1/(2*qs/np.sinh(2*qs))
-        else:
-            #qs=3*param['tc']*mmag/2/(param['s']+1)/te[:ss[2]]
-            gamma=tp[:ss[2]]/param['tc']*param['R']*param['gep']#*1/(2*qs/np.sinh(2*qs))*1.3
+        qs=3*param['tc']*mmag/2/(param['s']+1)/te[:ss[2]]
+        gamma=tp[:ss[2]]/param['tc']*param['R']*param['gepf'](te[:ss[2]])#*1/(2*qs/np.sinh(2*qs))
         rate=(1-np.true_divide(mz,mmag))*gamma
         dmz=rate*mz*param['dt']
         return(dmz)
