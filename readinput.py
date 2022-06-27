@@ -125,7 +125,7 @@ def readout():
     initemp=100.                        #initial temperature of electron and phonon bath [K]
 
     #gaussian pulse parameters
-    pump_power=8e20                         #power of optical pulse in W/m^3
+    pump_power=1e21                         #power of optical pulse in W/m^3
     pump_sigma=0.0495e-12                    #sigma of gaussian pulse in s
     pump_delay=10e-12                        #position of maximum of gaussian laser pulse in s
 
@@ -155,9 +155,9 @@ def readout():
         pump=ipl.interp1d(t,dpump, fill_value=(0,0), bounds_error=False)
 
     #sample constants for s-d-model
-    sdrate=np.array([0.1, 0.5, 1, 5, 10, 50, 100])*1e-12
-    rhosd=1e-19
-    sdissrate=np.array([0.1, 0.5, 1, 5, 10, 50, 100])*1e-12
+    sdrate=np.array([0.1, 1, 10, 100])*1e-12
+    rhosd=4/3*1e19
+    sdissrate=np.array([0.1, 1, 10, 100])*1e-12
 
     #calculate initial kerr-signal:
     #kerr0=0

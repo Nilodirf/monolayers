@@ -12,8 +12,8 @@ import output
 
 #read out inputfile
 par=readinput.readout()
-for i in par['sdrate']:
-    for j in par['sdissrate']:
-        output.output(par,i, j)
+for pf in par['sdrate']:
+    for pl in par['sdissrate']:
+        output.output(par,pf, pl)
 
 
