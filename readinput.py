@@ -12,7 +12,7 @@ import florianfit
 def readout():
 
     class sample:
-        def __init__(self, name, gepfit, celfit, cphfit, spin, tc, tdeb, muat, dx, dy, dz, apc, asf, inimag, kappa, locmom, locspin):
+        def __init__(self, name, gepfit, celfit, cphfit, spin, tc, tdeb, muat, dx, dy, dz, apc, asf, inimag, kappa, locmom, locspin, model):
             self.name=name
             self.gepfit=gepfit
             self.celfit=celfit
@@ -30,6 +30,12 @@ def readout():
             self.kappa=kappa
             self.locmom=locmom
             self.locspin=locspin
+            self.model=model
+            self.J=float(3*sp.k*self.tc*((self.spin-self.locspin)**2)/((self.spin-self.locspin)*((self.spin-self.locspin)+1)))
+            self.Jloc = float(3 * sp.k * self.tc * (self.locspin ** 2) / (self.locspin * (self.locspin + 1)))
+            self.R =8*sam.asf*sam.dx*sam.dy*sam.dz/sam.apc*sam.tc**2/sam.tdeb**2/sp.k/(sam.muat-sam.locmom)
+            self.arbsc=self.R/sam.tc**2*self.J/sp.k
+
 
     Nickel=sample('Nickel',
                   florianfit.interpol('Ab-initio-Ni/Ni_G_ep.txt', None, None),
@@ -45,7 +51,8 @@ def readout():
                   [0.,0.,0.96925], #inimag at 295K
                   90.7, #kappa
                   0.,
-                  0.)
+                  0.,
+                  'm3tm')
    
     Cobalt=sample('Cobalt',
                   florianfit.interpol('Ab-initio-Co/Co_G_ep.txt', None, None),
@@ -61,7 +68,8 @@ def readout():
                   [0.,0.,0.99793], #inimag at 295K
                   90.7, #kappa
                   0.,
-                  0.)
+                  0.,
+                  'arbspin')
 
     Iron=sample('Iron',
                 florianfit.interpol('Ab-initio-Fe/Fe_G_ep.txt', None, None),
@@ -77,7 +85,8 @@ def readout():
                 [0.,0.,0.9863], #inimag at 295K
                 0, #kappa
                 0.,
-                0.)
+                0.,
+                'arbspin')
 
     Gadolinium=sample('Gadolinium',
                       florianfit.interpol(2.5e17, 'const', None),
@@ -95,14 +104,14 @@ def readout():
                       [0.,0.,1.],
                       0,
                       7.,
-                      3.)
+                      3.,
+                      'sd')
     
 
     #define different approaches of simulation:
     alexpump=False
-    fpflo=False
-    model='sd'
     tediff=False
+    fpflo=False
     qes=False
 
     #sample
@@ -119,27 +128,13 @@ def readout():
     initemp=100.                        #initial temperature of electron and phonon bath [K]
 
     #gaussian pulse parameters
-    pump_power=1e21                         #power of optical pulse in W/m^3
+    pump_power=1e21                          #power of optical pulse in W/m^3
     pump_sigma=0.0495e-12                    #sigma of gaussian pulse in s
     pump_delay=10e-12                        #position of maximum of gaussian laser pulse in s
+    pendep=40e-9                             #penetration depth of laserpulse
 
-    #alternative parameters if no ab initio calculations can be used
-    pendep=40e-9                                           #penetration depth of laserpulse
-    me0=0.99142842299866007                                #some correction factor for initial magnetization
-    cve_const=225                                          #proportionality constant of electron specific heat
-    cvp_const=2.33e6#3.78e6                                #constant phonon heat capacity 
-    gep=0.25e18                                            #flow constant between electron and phonon heat baths 
     ges=1
     lamda=5e15                                             #constant for ambient heat equilibration of lattice
-
-    #sample constants deducted from class input
-    J=float(3*sp.k*sam.tc*(sam.spin**2)/(sam.spin*(sam.spin+1)))                        #exchange splitting constant
-    if fpflo:
-        R=8*sam.asf*sam.dx*sam.dy*sam.dz/sam.apc*sam.tc**2/sam.tdeb**2/sp.k/(sam.muat-sam.locmom)    #parameter for magnetization dynamics /gep
-    else:
-        R=8*sam.asf*sam.dx*sam.dy*sam.dz/sam.apc*sam.tc**2/sam.tdeb**2/sp.k/(sam.muat-sam.locmom)
-    arbsconst=R/sam.tc**2*J/sp.k                                                    #constant for the computation of arbitrary spin dynamics
-
 
     pump=None
     if alexpump:
@@ -160,10 +155,10 @@ def readout():
     #inikerr=kerr0                                               #initial kerr-signal of probe
 
     param={'gepf': sam.gepfit, 'celf': sam.celfit, 'cphf': sam.cphfit, 'ss': samplesize, 's':sam.spin, 'tc':sam.tc,
-           'muat':sam.muat, 'hex':h_ext, 'dt':dt, 'nj':nj, 'R':R, 'inimag':sam.inimag, 'pendep':pendep, 'initemp':initemp, 'me0':me0,
-           'dx':sam.dx, 'dy':sam.dy, 'dz':sam.dz, 'simlen':simlen, 'J':J,'fpflo':fpflo, 'psig':pump_sigma, 'tdeb':sam.tdeb, 'pp':pump_power, 
-           'asc':arbsconst, 'pdel':pump_delay, 
-           'asf':sam.asf, 'apc':sam.apc, 'name':sam.name, 'model':model, 'pump':pump, 'ap':alexpump, 'kappa':sam.kappa, 'tediff':tediff, 'ges':ges, 'qes':qes,
+           'muat':sam.muat, 'hex':h_ext, 'dt':dt, 'nj':nj, 'R':sam.R, 'inimag':sam.inimag, 'pendep':pendep, 'initemp':initemp,
+           'dx':sam.dx, 'dy':sam.dy, 'dz':sam.dz, 'simlen':simlen, 'J':sam.J,'fpflo':fpflo, 'psig':pump_sigma, 'tdeb':sam.tdeb, 'pp':pump_power,
+           'asc':sam.arbsc, 'pdel':pump_delay,
+           'asf':sam.asf, 'apc':sam.apc, 'name':sam.name, 'model':sam.model, 'pump':pump, 'ap':alexpump, 'kappa':sam.kappa, 'tediff':tediff, 'ges':ges, 'qes':qes,
            'lambda':lamda, 'sdrate':sdrate, 'rhosd':rhosd, 'sdissrate':sdissrate, 'locspin':sam.locspin, 'locmom':sam.locmom}
 
     if nj<samplesize[2]:
