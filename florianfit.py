@@ -28,10 +28,10 @@ def interpol(file, func, tein):
             y=np.array([file*float(i) for i in t])
             fit= ipl.interp1d(t,y)
         elif func=='einstein':
-            t=np.arange(0,2500, 0.001)
+            t=np.arange(1,2500, 0.001)
             y=file*(tein/t)**2*np.exp(tein/t)/(np.exp(tein/t)-1)**2
             fit=ipl.interp1d(t,y)
-        return(fit)
+    return(fit)
 
 
 def fitcp(T, Tein):

@@ -11,13 +11,14 @@ import magdyn
 import tempdyn
 import magdyn_s
 import sd_mag
+import pf_mag
 date=datetime.now().replace(microsecond=0)
 
 #this file defines the initial parameters in a usable form and calls the function(s) to compute the dynamics
 
 def output(pl, pf, pp):
     #create file and document input data
-    file=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_results/'+str(pl['name'])+'/sd/pf'+ str(pf) + 'test' + str(pp) + '.dat'), 'w+')
+    file=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_results/'+ str(pl['name']) +'/pf/' + str(input()) + '.dat'), 'w+')
 
     file.write('# time of execution: ' + str(date) + '\n')
     file.write('#model:' + str(pl['model']) + '\n')
@@ -54,10 +55,15 @@ def output(pl, pf, pp):
     file.write('#############################' + '\n')
     if pl['model']=='sd':
         file.write('# time [ps]'+'\t'+'magnetization'+'\t'+'T_e [K]'+'\t'+'T_p [K]'+'\t'+'E_tot [J/m^3]'+'\t'
-                   +'E_el [J/m^3]'+'\t'+'E_ph [J/m^3]'+'\t'+'E_spin [J/m^3]'+ '\t' + 'mu_s [J/m^3]' + '\n')
+                   +'E_el [J/m^3]'+'\t'+'E_ph [J/m^3]'+'\t'+'E_spin [J/m^3]'+ '\t' + 'mu_s [J]' + '\n')
+
+    elif pl['model']=='pf':
+        file.write('# time [ps]' + '\t' + 'magnetization' + '\t' + 'T_e [K]' + '\t' + 'T_p [K]' + '\t' + 'E_tot [J/m^3]' + '\t'
+                    + 'E_el [J/m^3]' + '\t' + 'E_ph [J/m^3]' + '\t' + 'E_spin [J/m^3]' + '\t' + 'it. magnetization' + '\n')
+
     else:
         file.write('# time [ps]'+'\t'+'magnetization'+'\t'+'T_e [K]'+'\t'+'T_p [K]'+'\t'+'E_tot [J/m^3]'+'\t'
-                +'E_el [J/m^3]'+'\t'+'E_ph [J/m^3]'+'\t'+'E_spin [J/m^3]'+ '\n')
+                +'E_el [J/m^3]'+'\t'+'E_ph [J/m^3]'+ '\t' +'E_spin [J/m^3]'+ '\n')
 
     ###initiate stuff for any model###
     samsize=[pl['ss'][i] for i in range(3)]
@@ -195,7 +201,7 @@ def output(pl, pf, pp):
             magzz2 = magz + dmagz
             dmus = sd_mag.itmag(samsize, tempe, dmagz, mus, pf, pp)
             mus2 = mus + dmus
-            dfs2 = sd_mag.magz(samsize, magzz2, tempe, mus2, fs, sup, sdn, pf, pp)
+            dfs2 = sd_mag.locmag(samsize, magzz2, tempe, mus2, fs, sup, sdn, pf, pp)
             newfs = fs + (dfs + dfs2) / 2
             dmagz2 = -np.sum(ms * dfs2, axis=-1) / pl['s']
             newmagz = magz + (dmagz + dmagz2) / 2
@@ -224,55 +230,56 @@ def output(pl, pf, pp):
 
     elif pl['model'] == 'pf':
 
-    fs0 = np.zeros(int(2 * pl['s']) + 1)
-    fs0[0] = 1
-    fs = np.array([fs0 for i in range(samsize[2])])
-    ms = (np.arange(2 * pl['s'] + 1) + np.array([-pl['s'] for i in range(int(2 * pl['s']) + 1)]))
-    sup = -np.power(ms, 2) - ms + pl['s'] ** 2 + pl['s']
-    sdn = -np.power(ms, 2) + ms + pl['s'] ** 2 + pl['s']
-    magz = -np.sum(ms * fs, axis=-1) / pl['s']
-    magp = np.array([0 for i in range(samsize[2])])
+        fs0 = np.zeros(int(2 * pl['s']) + 1)
+        fs0[0] = 1
+        fs = np.array([fs0 for i in range(samsize[2])])
+        ms = (np.arange(2 * pl['s'] + 1) + np.array([-pl['s'] for i in range(int(2 * pl['s']) + 1)]))
+        sup = -np.power(ms, 2) - ms + pl['s'] ** 2 + pl['s']
+        sdn = -np.power(ms, 2) + ms + pl['s'] ** 2 + pl['s']
+        magz = -np.sum(ms * fs, axis=-1) / pl['s']
+        magp = np.array([0 for i in range(samsize[2])])
 
-    kerr0 = np.sum(magz * exp0)
+        kerr0 = np.sum(magz * exp0)
 
-    for t in range(pl['simlen']):
+        for t in range(pl['simlen']):
 
-        if t == 0 or t % 100 == 0:
-            kerr = np.sum(magz * exp0) / kerr0
-            file.write(
-                str(t * pl['dt'] * 1e12) + '\t' + str(kerr) + '\t' + str(tempe[0]) + '\t' + str(tempp[0]) + '\t'
-                + str(etot) + '\t' + str(eel) + '\t' + str(eph) + '\t' + str(espin) + str(magp[0]) + '\n')
+            if t == 0 or t % 100 == 0:
+                kerr = np.sum(magz * exp0) / kerr0
+                kerrp = np.sum(magp*exp0) / kerr0
+                file.write(
+                    str(t * pl['dt'] * 1e12) + '\t' + str(kerr) + '\t' + str(tempe[0]) + '\t' + str(tempp[0]) + '\t'
+                    + str(etot) + '\t' + str(eel) + '\t' + str(eph) + '\t' + str(espin) + '\t' + str(kerrp) + '\n')
 
-        dfs = sd_mag.locmag(samsize, magz, tempe, magp, fs, sup, sdn, pf, pp)
-        dmagz = -np.sum(ms * dfs, axis=-1) / pl['s']
-        magzz2 = magz + dmagz
-        dmagp = sd_mag.itmag(samsize, tempe, dmagz, magp, pf, pp)
-        magp2 = magp + dmagp
-        dfs2 = sd_mag.magz(samsize, magzz2, tempe, magp2, fs, sup, sdn, pf, pp)
-        newfs = fs + (dfs + dfs2) / 2
-        dmagz2 = -np.sum(ms * dfs2, axis=-1) / pl['s']
-        newmagz = magz + (dmagz + dmagz2) / 2
-        dmagp2 = sd_mag.itmag(samsize, tempe, dmagz2, magp2, pf, pp)
-        newmagp = magp + (dmagp + dmagp2) / 2
-        magz = newmagz
-        fs = newfs
-        magp = newmagp
+            dfs = pf_mag.locmag(samsize, magz, tempe, magp, fs, sup, sdn, pf, pp)
+            dmagz = -np.sum(ms * dfs, axis=-1) / pl['s']
+            magzz2 = magz + dmagz
+            dmagp = pf_mag.itmag(samsize, tempe, dmagz, magp, pf, pp)
+            magp2 = magp + dmagp
+            dfs2 = pf_mag.locmag(samsize, magzz2, tempe, magp2, fs, sup, sdn, pf, pp)
+            newfs = fs + (dfs + dfs2) / 2
+            dmagz2 = -np.sum(ms * dfs2, axis=-1) / pl['s']
+            newmagz = magz + (dmagz + dmagz2) / 2
+            dmagp2 = pf_mag.itmag(samsize, tempe, dmagz2, magp2, pf, pp)
+            newmagp = magp + (dmagp + dmagp2) / 2
+            magz = newmagz
+            fs = newfs
+            magp = newmagp
 
-        if pl['qes'] and t > pl['pdel'] / pl['dt'] - 1e4:
-            dqes = (dmagz + dmagz2) / 2 / pl['dt'] * pl['J'] * magz / pl['dx'] / pl['dy'] / pl['dz'] * pl['apc']
+            if pl['qes'] and t > pl['pdel'] / pl['dt'] - 1e4:
+                dqes = (dmagz + dmagz2) / 2 / pl['dt'] * pl['J'] * magz / pl['dx'] / pl['dy'] / pl['dz'] * pl['apc']
 
-        dtemps = tempdyn.tempdyn(t, tempe, tempp, dqes)
-        tempe += dtemps[0]
-        tempp += dtemps[1]
+            dtemps = tempdyn.tempdyn(t, tempe, tempp, dqes)
+            tempe += dtemps[0]
+            tempp += dtemps[1]
 
-        eel += pl['celf'](tempe[0]) * dtemps[0][0]
-        deel = pl['celf'](tempe[0]) * dtemps[0][0]
-        eph += pl['cphf'](tempp[0]) * dtemps[1][0]
-        deph = pl['cphf'](tempp[0]) * dtemps[1][0]
-        espin += dqes[0] * pl['dt']
-        despin = dqes[0] * pl['dt']
-        etot += deel + deph - despin
+            eel += pl['celf'](tempe[0]) * dtemps[0][0]
+            deel = pl['celf'](tempe[0]) * dtemps[0][0]
+            eph += pl['cphf'](tempp[0]) * dtemps[1][0]
+            deph = pl['cphf'](tempp[0]) * dtemps[1][0]
+            espin += dqes[0] * pl['dt']
+            despin = dqes[0] * pl['dt']
+            etot += deel + deph - despin
 
-    file.close()
+        file.close()
         
     return

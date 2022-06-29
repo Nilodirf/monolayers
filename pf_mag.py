@@ -5,16 +5,20 @@ from scipy import constants as sp
 
 from readinput import param
 
-def itmag(ss, te, dmloc, mus, pf, pl):
-    dmus=(param['rhosd']*dmloc-mus/pl)*param['dt']
-    return(dmus)
+def itmag(ss, te, dmloc, magp, pf, pl):
+    itmom = param['muat'] - param['locmom']
+    dmagp=-param['locmom']/itmom*dmloc-magp/pl*param['dt']
+    return(dmagp)
 
-def locmag(ss, mz, te, mus, fs, sup, sdn, pf, pl):
-    const_ijk=1/pf*(param[`Jloc`]*mp*mz-param['J']*mz*mp)/np.sinh((param[`Jloc`]*mp*mz/param[`locspin`]-param['J']/param['s']*mz*mp)/(2*sp.k*param['tc']))
+def locmag(ss, mz, te, mp, fs, sup, sdn, pf, pl):
+    itmom=param['muat']-param['locmom']
+    p_coup= itmom*param['J']*mz/(param['s']-param['locspin'])
+    f_coup= param['locmom']*param['Jloc']*mp/param['locspin']
+    const_ijk=1/pf*(f_coup-p_coup)/sp.k/param['tc']/param['locmom']/np.sinh((f_coup-p_coup)/param['locmom']/(2*sp.k*param['tc']))
     fsup=sup*fs
     fsdn=sdn*fs
-    wupwegprep=const_ijk0*np.exp(-(param['J']*mz-mus)/2/param['s']/sp.k/te[:ss[2]])
-    wdnwegprep=const_ijk*np.exp((param['J']*mz-mus)/2/param['s']/sp.k/te[:ss[2]])
+    wupwegprep=const_ijk*np.exp(-(f_coup-p_coup)/param['locmom']/(2*sp.k*te[:ss[2]]))
+    wdnwegprep=const_ijk*np.exp((f_coup-p_coup)/param['locmom']/(2*sp.k*te[:ss[2]]))
     wupweg=wupwegprep[...,np.newaxis]*fsup
     wdnweg=wdnwegprep[...,np.newaxis]*fsdn
     wuphin=np.roll(wupweg,1)
