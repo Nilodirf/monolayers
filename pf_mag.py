@@ -11,14 +11,15 @@ def itmag(ss, te, dmloc, magp, pf, pl):
     return(dmagp)
 
 def locmag(ss, mz, te, mp, fs, sup, sdn, pf, pl):
-    itmom=param['muat']-param['locmom']
-    p_coup= itmom*param['J']*mz/(param['s']-param['locspin'])
-    f_coup= param['locmom']*param['Jloc']*mp/param['locspin']
-    const_ijk=1/pf*(f_coup-p_coup)/sp.k/param['tc']/param['locmom']/np.sinh((f_coup-p_coup)/param['locmom']/(2*sp.k*param['tc']))
+    print(fs)
+    itmom = param['muat'] - param['locmom']
+    p_coup= 1.6e-19
+    f_coup= 50e-19*abs(mz)
+    const_ijk=1/pf*(f_coup-p_coup)/sp.k/param['tc']/np.sinh((f_coup-p_coup)/(2*sp.k*te[:ss[2]]))
     fsup=sup*fs
     fsdn=sdn*fs
-    wupwegprep=const_ijk*np.exp(-(f_coup-p_coup)/param['locmom']/(2*sp.k*te[:ss[2]]))
-    wdnwegprep=const_ijk*np.exp((f_coup-p_coup)/param['locmom']/(2*sp.k*te[:ss[2]]))
+    wupwegprep=const_ijk*np.exp(-(f_coup-p_coup)/(2*sp.k*te[:ss[2]]))*(mp+1)/2
+    wdnwegprep=const_ijk*np.exp((f_coup-p_coup)/(2*sp.k*te[:ss[2]]))*(1-mp)/2
     wupweg=wupwegprep[...,np.newaxis]*fsup
     wdnweg=wdnwegprep[...,np.newaxis]*fsdn
     wuphin=np.roll(wupweg,1)

@@ -154,9 +154,9 @@ def readout():
         pump=ipl.interp1d(t,dpump, fill_value=(0,0), bounds_error=False)
 
     #sample constants for s-d-model
-    sdrate=np.array([2])*1e-11
+    sdrate=np.array([5])*1e-10
     rhosd=1e-19
-    sdissrate=np.array([0.1])
+    sdissrate=np.array([1e-13])
 
     param={'gepf': sam.gepfit, 'celf': sam.celfit, 'cphf': sam.cphfit, 'ss': samplesize, 's':sam.spin, 'tc':sam.tc,
            'muat':sam.muat, 'hex':h_ext, 'dt':dt, 'nj':nj, 'R':sam.R, 'inimag':sam.inimag, 'pendep':pendep, 'initemp':initemp,
