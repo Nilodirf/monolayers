@@ -12,8 +12,7 @@ import output
 
 #read out inputfile
 par=readinput.readout()
-for pf in par['sdrate']:
-    for pl in par['sdissrate']:
-        output.output(par,pf, pl)
+for power in par['pp']:
+    output.output(par, power)
 
 

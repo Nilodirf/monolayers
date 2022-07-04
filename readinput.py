@@ -120,28 +120,28 @@ def readout():
 
     #define different approaches of simulation:
     alexpump=False
-    tediff=False
-    fpflo=False
-    qes=False
+    tediff=True
+    fpflo=True
+    qes=True
 
     #sample
-    sam=samplechoice('Gadolinium')
+    sam=samplechoice('Nickel')
 
     #simulation time parameters
     simlen=int(1e6)               #length of simulation in units of dt
     dt=1e-16                        #timestep of simulation
 
     #initial sample conditions
-    samplesize=[1,1,1]                  #samplesize
-    nj=1                                #film thickness
+    samplesize=[1,1,42]                 #samplesize
+    nj=42                               #film thickness
     h_ext=0                             #external magnetic field
     initemp=100.                        #initial temperature of electron and phonon bath [K]
 
     #gaussian pulse parameters
-    pump_power=0e21                          #power of optical pulse in W/m^3
-    pump_sigma=0.0495e-12                    #sigma of gaussian pulse in s
+    pump_power=np.arange(1,10, 0.1)*1e22     #power of optical pulse in W/m^3
+    pump_sigma=0.018e-12                     #sigma of gaussian pulse in s
     pump_delay=10e-12                        #position of maximum of gaussian laser pulse in s
-    pendep=40e-9                             #penetration depth of laserpulse
+    pendep=15e-9                             #penetration depth of laserpulse
 
     ges=1
     lamda=5e15                                             #constant for ambient heat equilibration of lattice

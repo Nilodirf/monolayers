@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="51bb6b80-bf3d-4ecc-a6fe-d8c9c14480c7" name="Changes" comment="" />
+=======
+    <list default="true" id="16ecaaf3-ccee-4076-a575-f4d5cd02831e" name="Changes" comment="" />
+>>>>>>> e3906da4f70209e855b77721c743e25568051dd7
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,7 +17,11 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+<<<<<<< HEAD
   <component name="ProjectId" id="2BHwy949dzTHXchJqmVv6PHRd3X" />
+=======
+  <component name="ProjectId" id="2BKczrRtdG0q9hdX0aePsUf53cW" />
+>>>>>>> e3906da4f70209e855b77721c743e25568051dd7
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -21,17 +29,30 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
+<<<<<<< HEAD
     "RunOnceActivity.ShowReadmeOnStart": "true"
+=======
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/Users/Theodor/Documents/GitHub/magplot/magplot.py"
+>>>>>>> e3906da4f70209e855b77721c743e25568051dd7
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
+<<<<<<< HEAD
       <changelist id="51bb6b80-bf3d-4ecc-a6fe-d8c9c14480c7" name="Changes" comment="" />
       <created>1656576572621</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1656576572621</updated>
+=======
+      <changelist id="16ecaaf3-ccee-4076-a575-f4d5cd02831e" name="Changes" comment="" />
+      <created>1656658494561</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1656658494561</updated>
+>>>>>>> e3906da4f70209e855b77721c743e25568051dd7
     </task>
     <servers />
   </component>
