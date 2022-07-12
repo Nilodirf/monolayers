@@ -6,7 +6,7 @@ from scipy import constants as sp
 from readinput import param
 
 
-def tempdyn(ts, te, tp, dqes, pp):
+def tempdyn(ts, te, tp, dqes):
 
 
     cv_el=param['celf'](te)
@@ -44,7 +44,7 @@ def tempdyn(ts, te, tp, dqes, pp):
 
     ###########compute pump temperature for each timestep and depth:##########
 
-    dpump=pp*np.exp(-np.arange(param['nj'])*param['dz']/param['pendep'])*np.exp(-((ts*param['dt']-param['pdel'])**2)/2/param['psig']**2)
+    dpump=param['pp']*np.exp(-np.arange(param['nj'])*param['dz']/param['pendep'])*np.exp(-((ts*param['dt']-param['pdel'])**2)/2/param['psig']**2)
 
     ######compute heat diffusion#####
         #if ts>9e4 and ts%1000==0:

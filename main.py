@@ -12,7 +12,6 @@ import output
 
 #read out inputfile
 par=readinput.readout()
-for power in par['pp']:
-    output.output(par, power)
+output.output(par)
 
 

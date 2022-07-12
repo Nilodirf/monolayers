@@ -16,9 +16,9 @@ date=datetime.now().replace(microsecond=0)
 
 #this file defines the initial parameters in a usable form and calls the function(s) to compute the dynamics
 
-def output(pl, pp):
+def output(pl):
     #create file and document input data
-    file=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_results/'+ str(pl['name']) +'/finite depth/' + str(pp) + '.dat'), 'w+')
+    file=open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3TM_results/'+ str(pl['name']) +'/lattice/' + str(input()) + '.dat'), 'w+')
 
     file.write('# time of execution: ' + str(date) + '\n')
     file.write('#model:' + str(pl['model']) + '\n')
@@ -105,7 +105,7 @@ def output(pl, pp):
             if pl['qes'] and t > pl['pdel'] / pl['dt'] - 1e4:
                 dqes = (dmagz + dmagz2) / 2 / pl['dt'] * pl['J'] * magz / pl['dx'] / pl['dy'] / pl['dz'] * pl['apc']
 
-            dtemps = tempdyn.tempdyn(t, tempe, tempp, dqes, pp)
+            dtemps = tempdyn.tempdyn(t, tempe, tempp, dqes)
             tempe += dtemps[0]
             tempp += dtemps[1]
 
